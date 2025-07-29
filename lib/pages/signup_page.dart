@@ -1,125 +1,104 @@
 import 'package:flutter/material.dart';
 import 'package:studybuddy/pages/login_page.dart';
 import 'package:studybuddy/pages/home_page.dart';
+import 'package:studybuddy/data/signup_data.dart';
+import 'package:studybuddy/widgets/signup_widgets.dart';
 
-class SignUpPage extends StatelessWidget {
+class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
+
+  @override
+  State<SignUpPage> createState() => _SignUpPageState();
+}
+
+class _SignUpPageState extends State<SignUpPage> {
+  final data = SignUpData();
+
+  void _moveFocus(TextEditingController controller, FocusNode nextFocus) {
+    if (controller.text.isNotEmpty) {
+      FocusScope.of(context).requestFocus(nextFocus);
+    }
+  }
+
+  @override
+  void dispose() {
+    data.dispose();
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           gradient: LinearGradient(
-              colors: [Colors.white, Colors.redAccent],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter),
+            colors: [Colors.white, Colors.redAccent],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Center(
+            const Center(
               child: Text(
                 'Sign Up',
                 style: TextStyle(color: Colors.black, fontSize: 40),
               ),
             ),
-            SizedBox(
-              height: 100,
-            ),
+            const SizedBox(height: 100),
             Column(
               children: [
-                Container(
-                  width: 300,
-                  height: 45,
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'firstname',
-                      border: InputBorder.none,
-                    ),
-                    style: TextStyle(color: Colors.black),
-                  ),
+                buildSignUpTextField(
+                  controller: data.firstNameController,
+                  hint: 'firstname',
+                  onEditingComplete: () =>
+                      _moveFocus(data.firstNameController, data.lastNameFocus),
                 ),
-                SizedBox(
-                  height: 15,
+                const SizedBox(height: 15),
+                buildSignUpTextField(
+                  controller: data.lastNameController,
+                  hint: 'lastname',
+                  focusNode: data.lastNameFocus,
+                  onEditingComplete: () =>
+                      _moveFocus(data.lastNameController, data.emailFocus),
                 ),
-                Container(
-                  width: 300,
-                  height: 45,
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'lastname',
-                      border: InputBorder.none,
-                    ),
-                    style: TextStyle(color: Colors.black),
-                  ),
+                const SizedBox(height: 15),
+                buildSignUpTextField(
+                  controller: data.emailController,
+                  hint: 'email',
+                  focusNode: data.emailFocus,
+                  onEditingComplete: () =>
+                      _moveFocus(data.emailController, data.passwordFocus),
                 ),
-                SizedBox(height: 15),
-                Container(
-                  width: 300,
-                  height: 45,
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: 'email',
-                      border: InputBorder.none,
-                    ),
-                    style: TextStyle(color: Colors.black),
-                  ),
+                const SizedBox(height: 15),
+                buildSignUpTextField(
+                  controller: data.passwordController,
+                  hint: 'password',
+                  isPassword: true,
+                  focusNode: data.passwordFocus,
+                  onEditingComplete: () => _moveFocus(
+                      data.passwordController, data.confirmPasswordFocus),
                 ),
-                SizedBox(height: 15),
-                Container(
-                  width: 300,
-                  height: 45,
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: TextField(
-                    obscureText: true, // This hides the password text
-                    decoration: InputDecoration(
-                      hintText: 'password',
-                      border: InputBorder.none,
-                    ),
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ),
-                SizedBox(height: 15),
-                Container(
-                  width: 300,
-                  height: 45,
-                  padding: EdgeInsets.symmetric(horizontal: 15),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(15)),
-                  child: TextField(
-                    obscureText: true, // This hides the password text
-                    decoration: InputDecoration(
-                      hintText: 'confirm password',
-                      border: InputBorder.none,
-                    ),
-                    style: TextStyle(color: Colors.black),
-                  ),
+                const SizedBox(height: 15),
+                buildSignUpTextField(
+                  controller: data.confirmPasswordController,
+                  hint: 'confirm password',
+                  isPassword: true,
+                  focusNode: data.confirmPasswordFocus,
+                  onEditingComplete: () {
+                    if (data.confirmPasswordController.text.isNotEmpty) {
+                      FocusScope.of(context).unfocus();
+                    }
+                  },
                 ),
               ],
             ),
-            SizedBox(
-              height: 40,
-            ),
+            const SizedBox(height: 40),
             Row(
               children: [
-                SizedBox(width: 220),
-                Text(
+                const SizedBox(width: 220),
+                const Text(
                   'Create',
                   style: TextStyle(
                     fontSize: 25,
@@ -127,15 +106,15 @@ class SignUpPage extends StatelessWidget {
                     color: Colors.black,
                   ),
                 ),
-                SizedBox(width: 5),
+                const SizedBox(width: 5),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
+                      MaterialPageRoute(builder: (context) => const HomePage()),
                     );
                   },
-                  child: Icon(
+                  child: const Icon(
                     Icons.arrow_circle_right_outlined,
                     color: Colors.black,
                     size: 35,
@@ -143,13 +122,11 @@ class SignUpPage extends StatelessWidget {
                 ),
               ],
             ),
-            SizedBox(
-              height: 20,
-            ),
+            const SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text(
+                const Text(
                   'Already have an account?',
                   style: TextStyle(
                     fontSize: 16,
@@ -157,22 +134,22 @@ class SignUpPage extends StatelessWidget {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                SizedBox(width: 10),
+                const SizedBox(width: 10),
                 GestureDetector(
                   onTap: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => LoginPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const LoginPage()),
                     );
                   },
-                  child: Text(
+                  child: const Text(
                     'Login',
                     style: TextStyle(
                       fontSize: 16,
                       color: Color.fromARGB(255, 14, 17, 211),
                       fontWeight: FontWeight.bold,
-                      decoration: TextDecoration
-                          .underline, // optional for clickable look
+                      decoration: TextDecoration.underline,
                     ),
                   ),
                 ),
